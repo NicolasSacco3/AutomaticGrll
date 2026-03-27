@@ -1,0 +1,55 @@
+<h2>Grilla del Mes</h2>
+
+<style>
+    table {
+        border-collapse: collapse;
+    }
+    th {
+        background-color: #d9d9d9;
+    }
+    td, th {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+    }
+</style>
+
+<table>
+    <tr>
+        <th>Rol</th>
+        {% for f in fechas %}
+            <th>
+                {% set dias_semana = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'] %}
+                {{ dias_semana[f.weekday()] }} <br>
+                {{ f.strftime('%d/%m') }}
+            </th>
+        {% endfor %}
+    </tr>
+
+    {% for rol, valores in tabla.items() %}
+    <tr>
+        <td><b>{{ rol }}</b></td>
+        {% for v in valores %}
+            <td>{{ v }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<br>
+
+<h3>Observaciones</h3>
+
+{% if observaciones %}
+    <ul>
+        {% for obs in observaciones %}
+            <li>{{ obs }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>✅ Todo cubierto correctamente</p>
+{% endif %}
+<br>
+<a href="/exportar_excel">
+    <button>📥 Exportar a Excel</button>
+</a>
+<a href="/dashboard">Volver</a>

@@ -1,0 +1,39 @@
+<h2>Hola {{user.nombre}}</h2>
+
+<h3>Seleccioná los días que no podés asistir</h3>
+
+<form method="POST">
+
+    {% for dia in dias %}
+        <div>
+            <input type="checkbox" name="fechas" value="{{dia}}">
+            
+            {% set dias_semana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'] %}
+            
+            {{ dias_semana[dia.weekday()] }} {{ dia.strftime('%d/%m/%Y') }}
+        </div>
+    {% endfor %}
+
+    <button type="submit">Guardar faltas</button>
+</form>
+
+<br>
+<h3>
+Estado: 
+{% if todos %}
+    ✅ Todos cargaron faltas
+{% else %}
+    ⏳ Faltan personas
+{% endif %}
+</h3>
+<ul>
+{% for u in faltan %}
+    <li>{{u.nombre}}</li>
+{% endfor %}
+{% if todos and user.nombre == "Nicolás" %}
+    <a href="/grilla">Ver grilla automática</a>
+{% else %}
+    <p>⏳ La grilla se habilitará cuando todos carguen</p>
+{% endif %}
+<br>
+<a href="/logout">Salir</a>
