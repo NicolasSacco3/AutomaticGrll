@@ -8,9 +8,9 @@ from models import db, Usuario, Falta, USUARIOS
 app = Flask(__name__)
 import os
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-app.config['SECRET_KEY'] = 'secret'
-db.init_app(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'sqlite:///alabanza.db')
 
 # 👉 Crear DB y usuarios
 with app.app_context():
@@ -147,6 +147,11 @@ import pandas as pd
 from flask import send_file
 import io
 
+@app.route('/reset_mes')
+def reset_mes():
+    limpiar_mes()
+    return "Mes reiniciado"
+
 @app.route('/exportar_excel')
 def exportar_excel():
     if 'user_id' not in session:
@@ -235,4 +240,4 @@ def generar_observaciones(fechas, tabla):
 # RUN
 # ========================
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
