@@ -15,6 +15,8 @@ if db_url and db_url.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///alabanza.db'
 app.config['SECRET_KEY'] = 'secret'
+
+
 db.init_app(app)  # ✅ AGREGAR
 
 # 👉 Crear DB y usuarios
