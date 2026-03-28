@@ -3,7 +3,7 @@ from datetime import date
 from scheduler import generar_grilla
 from collections import defaultdict
 from flask import Flask, render_template, request, redirect, session
-from models import db, Usuario, Falta, USUARIOS
+from models import db, Usuario, Falta, USUARIOS, Configuracion
 
 app = Flask(__name__)
 import os
@@ -49,6 +49,8 @@ def login():
 # ========================
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    verificar_cambio_mes()  # 🔥 ACÁ
+
     if 'user_id' not in session:
         return redirect('/')
 
@@ -105,7 +107,8 @@ def logout():
 # GRILLA
 # ========================
 @app.route('/grilla')
-def ver_grilla():
+def ver_grilla(): 
+    verificar_cambio_mes()  # 🔥 ACÁ
     if 'user_id' not in session:
         return redirect('/')
 
@@ -161,6 +164,7 @@ def reset_mes():
 
 @app.route('/exportar_excel')
 def exportar_excel():
+    verificar_cambio_mes()  # 🔥 ACÁ
     if 'user_id' not in session:
         return redirect('/')
 
@@ -241,6 +245,31 @@ def generar_observaciones(fechas, tabla):
                 observaciones.append(f"{fecha} → falta cubrir: {rol}")
 
     return observaciones
+
+def verificar_cambio_mes():
+    from datetime import date
+
+    hoy = date.today()
+    mes_actual = str(hoy.month)
+    anio_actual = str(hoy.year)
+
+    mes_guardado = Configuracion.query.filter_by(clave="mes").first()
+    anio_guardado = Configuracion.query.filter_by(clave="anio").first()
+
+    if not mes_guardado:
+        db.session.add(Configuracion(clave="mes", valor=mes_actual))
+        db.session.add(Configuracion(clave="anio", valor=anio_actual))
+        db.session.commit()
+        return
+
+    if mes_guardado.valor != mes_actual or anio_guardado.valor != anio_actual:
+        print("🔄 Nuevo mes detectado, reseteando...")
+
+        limpiar_mes()
+
+        mes_guardado.valor = mes_actual
+        anio_guardado.valor = anio_actual
+        db.session.commit()
 
 
 # ========================

@@ -17,3 +17,8 @@ class Falta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
     fecha = db.Column(db.Date, nullable=False)
+    
+class Configuracion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    clave = db.Column(db.String(50), unique=True)
+    valor = db.Column(db.String(50))
