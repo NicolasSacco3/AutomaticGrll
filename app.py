@@ -8,9 +8,14 @@ from models import db, Usuario, Falta, USUARIOS
 app = Flask(__name__)
 import os
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL',
-    'sqlite:///alabanza.db')
+db_url = os.environ.get('DATABASE_URL')
+
+if db_url and db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url or 'sqlite:///alabanza.db'
+app.config['SECRET_KEY'] = 'secret'
+db.init_app(app)  # ✅ AGREGAR
 
 # 👉 Crear DB y usuarios
 with app.app_context():
